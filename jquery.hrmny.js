@@ -85,5 +85,9 @@ jQuery(document).ready(function($) {
         });
     };
     
-    $.getScript('http://code.jquery.com/color/jquery.color-2.1.1.min.js', _init);
+    if (typeof $.Color === 'undefined') {
+        $.getScript('http://code.jquery.com/color/jquery.color-2.1.1.min.js', _init);
+    } else {
+        _init();
+    }
 });
