@@ -30,12 +30,12 @@ jQuery(document).ready(function($) {
     
     this.namespace = 'hrmny-';
     this.css = '';
-    this.colorRules = {
+    this.colorProperties = {
         background: 'background-color',
         border: 'border-color',
         color: 'color'
     };
-    this.modifyers = {
+    this.modifiers = {
         hover: [
             ':active',
             ':focus',
@@ -73,9 +73,9 @@ jQuery(document).ready(function($) {
     var _addCssRulesFor = function(hrmyname, colorname, Color) {
         var n = self.namespace;
         var base = '.'+n+hrmyname+' .'+n;
-        $.each(self.colorRules, function(alias, rule) {
+        $.each(self.colorProperties, function(alias, property) {
             self.css += base+alias+'-'+colorname+', ';
-            $.each(self.modifyers, function(modname, selectors) {
+            $.each(self.modifiers, function(modname, selectors) {
                 if (typeof selectors === 'object') {
                     $.each(selectors, function() {
                         self.css += base+modname+'-'+alias+'-'+colorname+this+', ';
@@ -85,7 +85,7 @@ jQuery(document).ready(function($) {
                 }
             });
 
-            self.css = self.css.substring(0, self.css.length-2)+'{'+rule+':'+Color.toHexString()+';} ';
+            self.css = self.css.substring(0, self.css.length-2)+'{'+property+':'+Color.toHexString()+';} ';
         });
 
     }
