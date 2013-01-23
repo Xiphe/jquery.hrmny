@@ -1,6 +1,6 @@
 /**
  * jQuery.hrmny
- * 0.1-alpha
+ * 0.1-alpha2
  * (c) 2013 Hannes Diercks
  * GPLv2
  */
@@ -35,6 +35,13 @@ jQuery(document).ready(function($) {
         border: 'border-color',
         color: 'color'
     };
+    this.modifyers = {
+        hover: [
+            ':active',
+            ':focus',
+            ':hover'
+        ]
+    }
     
     var self = this;
     var _base = null;
@@ -43,9 +50,7 @@ jQuery(document).ready(function($) {
         self.css = '';
         var n = self.namespace;
         $.each(self.harmonies, function(hrmyname, colors) {
-            $.each(self.colorRules, function(a, r) {
-                self.css += '.'+n+hrmyname+' .'+n+a+'-base{'+r+':'+_base.toHexString()+';} ';
-            });
+            _addCssRulesFor(hrmyname, 'base', _base);
             $.each(colors, function(clrname, setngs) {
                 var color = $.extend({}, _base);
                 
@@ -56,15 +61,34 @@ jQuery(document).ready(function($) {
                         alert(m+'('+v+') is not a valid jQuery.Color method');
                     }
                 });
-                $.each(self.colorRules, function(a, r) {
-                    self.css += '.'+n+hrmyname+' .'+n+a+'-'+clrname+'{'+r+':'+color.toHexString()+';} ';
-                });
+
+                _addCssRulesFor(hrmyname, clrname, color);
             });
         });
         if (typeof cb === 'function') {
             window.setTimeout(cb, 0);
         }
     };
+
+    var _addCssRulesFor = function(hrmyname, colorname, Color) {
+        var n = self.namespace;
+        var base = '.'+n+hrmyname+' .'+n;
+        $.each(self.colorRules, function(alias, rule) {
+            self.css += base+alias+'-'+colorname+', ';
+            $.each(self.modifyers, function(modname, selectors) {
+                if (typeof selectors === 'object') {
+                    $.each(selectors, function() {
+                        self.css += base+modname+'-'+alias+'-'+colorname+this+', ';
+                    });
+                } else {
+                    self.css += base+modname+'-'+alias+'-'+colorname+selectors+', ';
+                }
+            });
+
+            self.css = self.css.substring(0, self.css.length-2)+'{'+rule+':'+Color.toHexString()+';} ';
+        });
+
+    }
     
     var _appendStyles = function() {
         if (!$('#'+self.namespace+'styles').length) {
